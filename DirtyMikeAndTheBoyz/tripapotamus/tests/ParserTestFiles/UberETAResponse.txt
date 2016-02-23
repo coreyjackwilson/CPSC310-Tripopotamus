@@ -1,0 +1,22 @@
+{
+  "times": [
+    {
+      "localized_display_name": "uberX",
+      "estimate": 111,
+      "display_name": "uber_1",
+      "product_id": "6450cc0f-4d39-4473-8632-1e2c2049fefe"
+    },
+    {
+      "localized_display_name": "uberXL",
+      "estimate": 222,
+      "display_name": "uber_2",
+      "product_id": "46c40aaf-e282-425a-8b46-b0a19344bb58"
+    },
+    {
+      "localized_display_name": "PEDAL",
+      "estimate": 333,
+      "display_name": "uber_3",
+      "product_id": "4d2d9f77-542c-40c0-b96e-7be262300a60"
+    }
+  ]
+}

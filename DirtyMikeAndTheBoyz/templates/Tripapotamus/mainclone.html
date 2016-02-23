@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <title>You'll trip, on Tripapotam.us</title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+    <script src="{% static "js/JQuery.js" %}"></script>
+    <script src="{% static "js/map.js" %}"></script>
+    <script src="{% static "js/cars.js" %}"></script>
+    <script src="{% static "js/amazon.js" %}"></script>
+
+    <script>
+    //Could not move this to external .js file as jQuery .get(/test/,..) would not compile. Leaving in for now.
+    function showCars() {
+        clearTable();
+        if (lat > 48.020146 || lat < 47.290213 || long > -121.985303 || long < -122.436279) {
+            alert('The starting location is outside of the Uber Seattle Service area')
+        }
+        else if (endLat > 48.020146 || endLat < 47.290213 || endLong > -121.985303 || endLong < -122.436279) {
+            alert('The Ending location is outside of the Uber Seattle Service area')
+        }
+        else {
+            $('table').innerHTML = " ";
+            var obj = {"lat": lat, "long": long, "distance": distance, "time": time};
+            $.get(/getVehicleOptions/,
+                    obj,
+                    function (status) {
+                        jsonObject = JSON.parse(status);
+                        var th;
+                        th = $('<tr/>');
+                        th.append("<th>" + "Vehicle" + "</th>");
+                        th.append("<th>" + "Price" + "</th>");
+                        th.append("<th>" + "Savings" + "</th>");
+                        th.append("<th>" + "E.T.A." + "</th>");
+                        th.append("<th>" + "Confirm" + "</th>");
+                        $('table').append(th);
+                        var tr;
+                        for (var i = 0; i < jsonObject.length; i++) {
+
+                            if (jsonObject[i].vehicle.name == "Taxi") {
+                                taxiPrice = Math.round(jsonObject[i].price * 100) / 100
+                            }
+                            tr = $('<tr/>');
+
+                            // Insert images
+                            if (jsonObject[i].vehicle.name == "UberSUV") {
+                                tr.append("<td>" + "<img src = '{% static "images/uberSUV.jpg" %}' id='image-cell' 'alt='UberSUV'></img>" + "</td>");
+                            }
+                            else if (jsonObject[i].vehicle.name == "UberBLACK") {
+                                tr.append("<td>" + "<img src = '{% static "images/uberBlack.jpg" %}' id='image-cell' 'alt='UberBLACK'></img>" + "</td>");
+                            }
+                            else if (jsonObject[i].vehicle.name == "PEDAL") {
+                                tr.append("<td>" + "<img src = '{% static "images/uberPedal.jpg" %}' id='image-cell' 'alt='PEDAL' height=></img>" + "</td>");
+                            }
+                            else if (jsonObject[i].vehicle.name == "uberXL") {
+                                tr.append("<td>" + "<img src = '{% static "images/uberXL.jpg" %}' id='image-cell' 'alt='uberXL'></img>" + "</td>");
+                            }
+                            else if (jsonObject[i].vehicle.name == "For Hire") {
+                                tr.append("<td>" + "<img src = '{% static "images/uberForHire.jpg" %}' id='image-cell' 'alt='For Hire'></img>" + "</td>");
+                            }
+                            else if (jsonObject[i].vehicle.name == "Taxi") {
+                                tr.append("<td>" + "<img src = '{% static "images/Taxi.jpg" %}' id='image-cell' 'alt='Taxi'></img>" + "</td>");
+                            }
+                            else if (jsonObject[i].vehicle.name == "UberPlus") {
+                                tr.append("<td>" + "<img src = '{% static "images/uberPlus.jpg" %}' id='image-cell' 'alt='UberPlus'></img>" + "</td>");
+                            }
+                            else if (jsonObject[i].vehicle.name == "uberX") {
+                                tr.append("<td>" + "<img src = '{% static "images/uberX.jpg" %}' id='image-cell' alt='uberX'></img>" + "</td>");
+                            }
+                            else {
+                                tr.append("<td>" + jsonObject[i].vehicle.name + "</td>");
+                            }
+                            tr.append("<td>" + "$" + (jsonObject[i].price).toFixed(2) + "</td>");
+                            if (isNaN(jsonObject[i].price)) {
+                                tr.append("<td>" + "$0.00" + "</td>");
+                            } else {
+                                tr.append("<td>" + "$" + (taxiPrice - jsonObject[i].price).toFixed(2) + "</td>");
+                            }
+                            if (isNaN(jsonObject[i].vehicle.eta)) {
+                                tr.append("<td>" + "0:00" + "</td>");
+                            } else {
+                                tr.append("<td>" + "<center>" + Math.floor(jsonObject[i].vehicle.eta / 60) + ":" + parseInt(jsonObject[i].vehicle.eta % 60, 10) + "</td>");
+                            }
+                            tr.append("<td>" + "<button  style='width:100%' onclick='confirmTrip(" + (Math.round(jsonObject[i].price * 100) / 100) + ")'; id='" + i + "'>" + "Take this " + "</button>" + "</td>");
+                            $('table').append(tr);
+                        }
+                    });
+        }
+    }
+    </script>
+</head>
+<body>
+<div id="control">
+    <form>
+        Start:<br>
+        <input type="text" id="curr" value="Seattle">
+        <br>
+        Finish:<br>
+        <input type="text" id="dest" value="University of Seattle">
+        <br>
+        <button id="click" type="button" onclick="onClick();" value="Calculate Route">Go!</button>
+    </form>
+</div>
+<div id="parent">
+    <header>
+        <img src='{% static "images/triplogo.jpg" %}'>
+    </header>
+    <div id="login-panel">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+        {% if user.is_authenticated %}
+            <h3>Hello {{ user.user }}!</h3>
+            <form action='logout'><input type="submit" value="Logout"></form>
+        {% else %}
+            <form method="POST" action=".">
+                {% csrf_token %}
+                <input type="text" name="username" value="username"/>
+                <input type="password" name="password" value="password"/>
+                <input type=submit name="login_box">
+            </form>
+            <form action="/create_user/">
+                <input type="submit" value="New Account">
+            </form>
+        {% endif %}
+    </div>
+    <div id="savings-panel">
+        {% if user.is_authenticated %}
+            <h3>Money Saved</h3>
+            <p>${{ user.moneySaved }}</p>
+        {% else %}
+        {% endif %}
+    </div>
+    <div id="history-panel">
+        {% if user.is_authenticated %}
+            <h3>Three Last Trips</h3>
+            <h3>Distance Travelled</h3>
+            <p>{{ user.distanceTravelled|floatformat }} miles</p>
+            {% else %}
+            {% endif %}
+        </div>
+    <div id="bookmarks-panel">
+    	{% if user.is_authenticated %}
+            <h3>Bookmarks</h3>
+            <p>1. {{ user.bookmark1_id.startPoint }} to {{ user.bookmark1_id.endPoint }}</p>
+            <p>2. {{ user.bookmark2_id.startPoint }} to {{ user.bookmark2_id.endPoint }}</p>
+            <p>3. {{ user.bookmark3_id.startPoint }} to {{ user.bookmark3_id.endPoint }}</p>
+            <p>4. {{ user.bookmark4_id.startPoint }} to {{ user.bookmark4_id.endPoint }}</p>
+            <p>5. {{ user.bookmark5_id.startPoint }} to {{ user.bookmark5_id.endPoint }}</p>
+            {% else %}
+            {% endif %}
+    </div>
+    <div id="badges">
+    	{% if user.is_authenticated %}
+    	<h3>Badges</h3>
+    	<p>{{ user.money_1 }}</p>
+    	<p>{{ user.money_10 }}</p>
+    	<p>{{ user.money_25 }}</p>
+    	<p>{{ user.money_50 }}</p>
+    	<p>{{ user.money_100 }}</p>
+    	{% endif %}
+        <div id="cars-panel">
+            <table align="center" id = "car-table"></table>
+        </div>
+    </div>
+</div>
+<div id="map-canvas"></div>
+<div id="amazon-div" style="color:#0000FF"></div>
+<footer>
+    {% if user.is_authenticated %}
+
+    <button onClick="getAmazonItems( {{ user.moneySaved }} );">TestAmazon</button>
+
+    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://goo.gl/sxgch5"
+       data-text="I've saved ${{ user.moneySaved }} with #tripapotamus"  data-count="none" data-dnt="true">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?
+                'http':'https';if(!d.getElementById(id)){js=d.createElement(s);
+            js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}
+        (document, 'script', 'twitter-wjs');</script>
+    {% endif %}
+    Copyright 1996 Dirty Mike and the Boyz<br>
+    Best viewed with <img src='{% static "images/netscape.gif" %}'>
+</footer>
+</body>
+</html>

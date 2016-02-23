@@ -1,0 +1,70 @@
+{
+  "products": [
+    {
+      "capacity": 4,
+      "product_id": "6450cc0f-4d39-4473-8632-1e2c2049fefe",
+      "price_details": {
+        "service_fees": [
+          {
+            "fee": 1.0,
+            "name": "Safe rides fee"
+          }
+        ],
+        "cost_per_minute": 1.0,
+        "distance_unit": "mile",
+        "minimum": 10.0,
+        "cost_per_distance": 1.00,
+        "base": 1.00,
+        "cancellation_fee": 1.0,
+        "currency_code": "USD"
+      },
+      "image": "http:\/\/d1a3f4spazzrp4.cloudfront.net\/car-types\/mono\/mono-uberx.png",
+      "display_name": "uber_1",
+      "description": "The low-cost Uber"
+    },
+    {
+      "capacity": 6,
+      "product_id": "46c40aaf-e282-425a-8b46-b0a19344bb58",
+      "price_details": {
+        "service_fees": [
+          {
+            "fee": 1.0,
+            "name": "Safe rides fee"
+          }
+        ],
+        "cost_per_minute": 2.0,
+        "distance_unit": "mile",
+        "minimum": 20.0,
+        "cost_per_distance": 2.0,
+        "base": 2.0,
+        "cancellation_fee": 2.0,
+        "currency_code": "USD"
+      },
+      "image": "http:\/\/d1a3f4spazzrp4.cloudfront.net\/car-types\/mono\/mono-uberxl2.png",
+      "display_name": "uber_2",
+      "description": "low-cost rides for large groups"
+    },
+    {
+      "capacity": 4,
+      "product_id": "4d2d9f77-542c-40c0-b96e-7be262300a60",
+      "price_details": {
+        "service_fees": [
+          {
+            "fee": 1.0,
+            "name": "Safe rides fee"
+          }
+        ],
+        "cost_per_minute": 3.0,
+        "distance_unit": "mile",
+        "minimum": 30.0,
+        "cost_per_distance": 3.0,
+        "base": 3.0,
+        "cancellation_fee": 3.0,
+        "currency_code": "USD"
+      },
+      "image": "http:\/\/d1a3f4spazzrp4.cloudfront.net\/car-types\/mono\/mono-black.png",
+      "display_name": "uber_3",
+      "description": "PEDAL"
+    }
+  ]
+}

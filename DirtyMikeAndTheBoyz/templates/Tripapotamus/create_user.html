@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <title>Create Account</title>
+    <link rel="stylesheet" href="{% static "css/main.css" %}" type="text/css"/>
+</head>
+<body>
+<h1>Create Account</h1>
+<form method="POST" action=".">
+    {% csrf_token %}
+    {% for field in form.visible_fields %}
+        {{ field }}
+    {% endfor %}
+    <input type=submit value="Get Started">
+</form>
+<form action="/" method="get">
+    <input type="submit" value="Return to homepage" 
+         name="Submit" id="frm1_submit" />
+</form>
+</body>
+</html>
